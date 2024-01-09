@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximization Cost Algorithm with Flask</title>
+    <!-- Include DataTables CSS and JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.js"></script>
+    <style>
+        .data-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-header {
+            font-weight: bold;
+        }
+
+        /* Additional styles for the dynamic form */
+        .dynamic-form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Maximization Cost Algorithm with Flask</h1>
+
+    <!-- Dynamic form for user input -->
+    <form id="dynamic-form">
+        <div class="data-row data-header">
+            <div>Coefficient</div>
+            <div>Variable</div>
+        </div>
+        <div class="data-row" id="template-row" style="display: none;">
+            <input type="text" name="coefficient[]" placeholder="Coefficient" required>
+            <input type="text" name="variable[]" placeholder="Variable" required>
+            <button type="button" onclick="removeRow(this)">Remove</button>
+        </div>
+        <div id="form-rows-container"></div>
+        <button type="button" onclick="addRow()">Add Row</button>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+
+    <!-- Display the dynamic content if available -->
+    {% if result %}
+        <div class="data-container">
+            <div class="data-row data-header">
+                {% for key in result.keys() %}
+                    <div>{{ key }}</div>
+                {% endfor %}
+            </div>
+            <div class="data-row">
+                {% for value in result.values() %}
+                    <div>{{ value }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        // JavaScript functions for dynamic form
+        function addRow() {
+            var templateRow = document.getElementById('template-row');
+            var newRow = templateRow.cloneNode(true);
+            newRow.style.display = 'flex';
+            newRow.id = '';  // Remove 'template-row' id from the new row
+    
+            // Check if it's the first row, add two input fields
+            if (document.getElementById('form-rows-container').childElementCount === 0) {
+                newRow.innerHTML = '<input type="text" name="coefficient[]" placeholder="Coefficient" required>' +
+                                   '<input type="text" name="variable[]" placeholder="Variable" required>' +
+                                   '<button type="button" onclick="removeRow(this)">Remove</button>';
+            } else {
+                // For subsequent rows, add three input fields
+                newRow.innerHTML = '<input type="text" name="coefficient[]" placeholder="Coefficient" required>' +
+                                   '<input type="text" name="variable[]" placeholder="Variable" required>' +
+                                   '<input type="text" name="operator[]" placeholder="Operator" required>' +
+                                   '<button type="button" onclick="removeRow(this)">Remove</button>';
+            }
+    
+            document.getElementById('form-rows-container').appendChild(newRow);
+        }
+    
+        function removeRow(button) {
+            var row = button.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    
+        function submitForm() {
+            var formData = $('#dynamic-form').serializeArray();
+    
+            // Send AJAX request to Flask endpoint
+            $.ajax({
+                type: 'POST',
+                url: '/solve_problem',
+                data: formData,
+                success: function(response) {
+                    console.log(response);
+                    updateResult(response);
+                },
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        }
+    
+        function updateResult(result) {
+            // Display the result dynamically
+            var resultContainer = document.createElement('div');
+            resultContainer.classList.add('data-container');
+    
+            var resultRow = document.createElement('div');
+            resultRow.classList.add('data-row');
+            for (var key in result) {
+                var resultCell = document.createElement('div');
+                resultCell.textContent = result[key];
+                resultRow.appendChild(resultCell);
+            }
+    
+            resultContainer.appendChild(resultRow);
+    
+            // Replace the existing result container with the updated one
+            var existingResultContainer = document.querySelector('.data-container');
+            existingResultContainer.parentNode.replaceChild(resultContainer, existingResultContainer);
+        }
+    </script>
+    
+
+</body>
+</html>
