@@ -68,7 +68,6 @@
             </div>
         </div>
     {% endif %}
-
     <script>
         // JavaScript functions for dynamic form
         function addRow() {
@@ -76,23 +75,29 @@
             var newRow = templateRow.cloneNode(true);
             newRow.style.display = 'flex';
             newRow.id = '';  // Remove 'template-row' id from the new row
-    
+
+            // Reset input field values to an empty string
+            var inputFields = newRow.querySelectorAll('input');
+            inputFields.forEach(function (input) {
+                input.value = '';
+            });
+
             // Check if it's the first row, add two input fields
             if (document.getElementById('form-rows-container').childElementCount === 0) {
-                newRow.innerHTML = '<input type="text" name="coefficient[]" placeholder="Coefficient" required>' +
-                                   '<input type="text" name="variable[]" placeholder="Variable" required>' +
+                newRow.innerHTML = '<input type="text" name="coefficient" placeholder="Coefficient" required>' +
+                                   '<input type="text" name="variable" placeholder="Variable" required>' +
                                    '<button type="button" onclick="removeRow(this)">Remove</button>';
             } else {
                 // For subsequent rows, add three input fields
-                newRow.innerHTML = '<input type="text" name="coefficient[]" placeholder="Coefficient" required>' +
-                                   '<input type="text" name="variable[]" placeholder="Variable" required>' +
-                                   '<input type="text" name="operator[]" placeholder="Operator" required>' +
+                newRow.innerHTML = '<input type="text" name="coefficient" placeholder="Coefficient" required>' +
+                                   '<input type="text" name="variable" placeholder="Variable" required>' +
+                                   '<input type="text" name="operator" placeholder="Operator" required>' +
                                    '<button type="button" onclick="removeRow(this)">Remove</button>';
             }
-    
+
             document.getElementById('form-rows-container').appendChild(newRow);
         }
-    
+
         function removeRow(button) {
             var row = button.parentNode;
             row.parentNode.removeChild(row);
@@ -100,12 +105,13 @@
     
         function submitForm() {
             var formData = $('#dynamic-form').serializeArray();
-    
+
             // Send AJAX request to Flask endpoint
             $.ajax({
                 type: 'POST',
                 url: '/solve_problem',
-                data: formData,
+                data: JSON.stringify(formData),
+                contentType: 'application/json;charset=UTF-8',
                 success: function(response) {
                     console.log(response);
                     updateResult(response);
@@ -120,23 +126,32 @@
             // Display the result dynamically
             var resultContainer = document.createElement('div');
             resultContainer.classList.add('data-container');
-    
+
             var resultRow = document.createElement('div');
             resultRow.classList.add('data-row');
-            for (var key in result) {
-                var resultCell = document.createElement('div');
-                resultCell.textContent = result[key];
-                resultRow.appendChild(resultCell);
+
+            try {
+                for (var key in result) {
+                    var resultCell = document.createElement('div');
+                    resultCell.textContent = result[key];
+                    resultRow.appendChild(resultCell);
+                }
+            } catch (error) {
+                console.error('Error updating result:', error);
+                return; // Stop execution if an error occurs
             }
-    
+
             resultContainer.appendChild(resultRow);
-    
+
             // Replace the existing result container with the updated one
             var existingResultContainer = document.querySelector('.data-container');
-            existingResultContainer.parentNode.replaceChild(resultContainer, existingResultContainer);
+            if (existingResultContainer) {
+                existingResultContainer.parentNode.replaceChild(resultContainer, existingResultContainer);
+            } else {
+                // If the existing container is not found, simply append the new one
+                document.body.appendChild(resultContainer);
+            }
         }
     </script>
-    
-
 </body>
 </html>
