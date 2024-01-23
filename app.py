@@ -38,16 +38,18 @@ def solve_problem():
         problem.solve()
 
         # Print the results
-        print("Optimal values:")
+        """print("Optimal values:")
         for variable in problem.variables():
             print(f"{variable.name} = {variable.varValue}")
         print("Maximum net profit:")
-        print(pulp.value(problem.objective))
+        print(pulp.value(problem.objective))"""
 
         return pulp.value(problem.objective)
 
+    res = solve(data)
+    print(res)
     # For now, just returning the received data as a response
-    return jsonify(solve(data))
+    return jsonify({"result": res})
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -54,20 +54,11 @@
     </form>
 
     <!-- Display the dynamic content if available -->
-    {% if result %}
-        <div class="data-container">
-            <div class="data-row data-header">
-                {% for key in result.keys() %}
-                    <div>{{ key }}</div>
-                {% endfor %}
-            </div>
+    <div class="data-container">
             <div class="data-row">
-                {% for value in result.values() %}
-                    <div>{{ value }}</div>
-                {% endfor %}
+                <p id="num-res"></p>
             </div>
-        </div>
-    {% endif %}
+    </div>
     <script>
         // JavaScript functions for dynamic form
         function addRow() {
@@ -114,43 +105,12 @@
                 contentType: 'application/json;charset=UTF-8',
                 success: function(response) {
                     console.log(response);
-                    updateResult(response);
+                    $('#num-res').text('Value: ' + response.result);
                 },
                 error: function(error) {
                     console.error(error);
                 }
             });
-        }
-    
-        function updateResult(result) {
-            // Display the result dynamically
-            var resultContainer = document.createElement('div');
-            resultContainer.classList.add('data-container');
-
-            var resultRow = document.createElement('div');
-            resultRow.classList.add('data-row');
-
-            try {
-                for (var key in result) {
-                    var resultCell = document.createElement('div');
-                    resultCell.textContent = result[key];
-                    resultRow.appendChild(resultCell);
-                }
-            } catch (error) {
-                console.error('Error updating result:', error);
-                return; // Stop execution if an error occurs
-            }
-
-            resultContainer.appendChild(resultRow);
-
-            // Replace the existing result container with the updated one
-            var existingResultContainer = document.querySelector('.data-container');
-            if (existingResultContainer) {
-                existingResultContainer.parentNode.replaceChild(resultContainer, existingResultContainer);
-            } else {
-                // If the existing container is not found, simply append the new one
-                document.body.appendChild(resultContainer);
-            }
         }
     </script>
 </body>
