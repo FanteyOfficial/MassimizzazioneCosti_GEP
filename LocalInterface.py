@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 
-
 class App(Tk):
     def __init__(self):
         Tk.__init__(self)
