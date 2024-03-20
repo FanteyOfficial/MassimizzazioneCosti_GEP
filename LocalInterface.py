@@ -5,11 +5,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 
+
 class App(Tk):
     def __init__(self):
         Tk.__init__(self)
         self.title("Massimizzazione costi")
-        #self.geometry("500x500")
+        # self.geometry("500x500")
         self.resizable(0, 0)
 
         self.titleLabel = Label(self,
@@ -96,36 +97,11 @@ class App(Tk):
         plt.ylim(0, 100)
         plt.show()
 
-        # ResWindow(f"{s}\n{pulp.value(problem.objective)}").mainloop()
-
         # messagebox.showinfo("Risultato", f"{s}\n{pulp.value(problem.objective)}")
 
-        #print(self.textField.get("1.0", END))
-        #print(int(self.textField.index('end-1c').split('.')[0]))
+        # print(self.textField.get("1.0", END))
+        # print(int(self.textField.index('end-1c').split('.')[0]))
 
-    def make_graphics(self):
-        pass
-
-
-class ResWindow(Toplevel):
-    def __init__(self, msg):
-        Toplevel.__init__(self)
-        self.msg = msg
-        self.title("Risultato")
-        self.geometry("300x300")
-        self.resizable(0, 0)
-
-        self.res = Label(self,
-                         text=self.msg,
-                         font=('sans serif', 14))
-        self.res.pack()
-
-        self.closeBtn = Button(self,
-                               text="Close",
-                               font=('sans serif', 12),
-                               bg='red',
-                               command=self.destroy)
-        self.closeBtn.pack(ipadx=10, ipady=5, pady=10)
 
 if __name__ == "__main__":
     App().mainloop()
