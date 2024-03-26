@@ -50,51 +50,54 @@ class App(Tk):
 
         constraints = []  # Initialize constraints list
 
-        for i in range(len(problems)):
-            if i == 0:
-                problem += eval(problems[i]), "The objective function"
-            else:
-                constraint = problems[i].replace("x", f"{x}").replace("y", f"{y}")
-                problem += eval(constraint), f"{i} constraint"
-                # Extract coefficients and constant from the constraint and add to the constraints list
-                coef_x, coef_y, constant = map(float, re.findall(r'[-+]?\d*\.\d+|\d+', constraint))
-                constraints.append((coef_x, coef_y, constant))
+        try:
+            for i in range(len(problems)):
+                if i == 0:
+                    problem += eval(problems[i]), "The objective function"
+                else:
+                    constraint = problems[i].replace("x", f"{x}").replace("y", f"{y}")
+                    problem += eval(constraint), f"{i} constraint"
+                    # Extract coefficients and constant from the constraint and add to the constraints list
+                    coef_x, coef_y, constant = map(float, re.findall(r'[-+]?\d*\.\d+|\d+', constraint))
+                    constraints.append((coef_x, coef_y, constant))
 
-        problem.solve()
+            problem.solve()
 
-        s = ""
-        for variable in problem.variables():
-            s += f"{variable.name} = {variable.varValue}\n"
+            s = ""
+            for variable in problem.variables():
+                s += f"{variable.name} = {variable.varValue}\n"
 
-        self.res['text'] = f"{s}\n{pulp.value(problem.objective)}"
+            self.res['text'] = f"{s}\n{pulp.value(problem.objective)}"
 
-        # Extract optimal solution
-        optimal_x = pulp.value(x)
-        optimal_y = pulp.value(y)
+            # Extract optimal solution
+            optimal_x = pulp.value(x)
+            optimal_y = pulp.value(y)
 
-        # Plot the feasible region
-        x_values = np.linspace(0, 100, 100)
-        y_values = [(j[2] - j[0] * x_values) / j[1] for j in constraints]
+            # Plot the feasible region
+            x_values = np.linspace(0, 100, 100)
+            y_values = [(j[2] - j[0] * x_values) / j[1] for j in constraints]
 
-        for j in y_values:
-            plt.plot(x_values, j, label=f"n")
+            for j in y_values:
+                plt.plot(x_values, j, label=f"n")
 
-        # Highlight the feasible region
-        plt.fill_between(x_values, np.minimum.reduce([x for x in y_values]),
-                         color='gray', alpha=0.5, label='Feasible Region')
+            # Highlight the feasible region
+            plt.fill_between(x_values, np.minimum.reduce([x for x in y_values]),
+                             color='gray', alpha=0.5, label='Feasible Region')
 
-        # Highlight the optimal solution
-        plt.scatter([optimal_x], [optimal_y], color='red',
-                    label='Optimal Solution')
+            # Highlight the optimal solution
+            plt.scatter([optimal_x], [optimal_y], color='red',
+                        label='Optimal Solution')
 
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.title("Feasible Region and Optimal Solution")
-        plt.legend()
-        plt.grid(True)
-        plt.xlim(0, 100)
-        plt.ylim(0, 100)
-        plt.show()
+            plt.xlabel("x")
+            plt.ylabel("y")
+            plt.title("Feasible Region and Optimal Solution")
+            plt.legend()
+            plt.grid(True)
+            plt.xlim(0, 100)
+            plt.ylim(0, 100)
+            plt.show()
+        except Exception as e:
+            messagebox.showerror("Errore", e)
 
         # messagebox.showinfo("Risultato", f"{s}\n{pulp.value(problem.objective)}")
 
