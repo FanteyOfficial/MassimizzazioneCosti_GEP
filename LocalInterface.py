@@ -46,22 +46,23 @@ class App(Tk):
 
         x = pulp.LpVariable("x", lowBound=0)
         y = pulp.LpVariable("y", lowBound=0)
-        problem = pulp.LpProblem("Un semplice problema di max", pulp.LpMaximize)
+        problem = pulp.LpProblem("Un_semplice_problema_di_max", pulp.LpMaximize)
 
         constraints = []  # Initialize constraints list
 
         try:
             for i in range(len(problems)):
                 if i == 0:
-                    problem += eval(problems[i]), "The objective function"
+                    problem += eval(problems[i]), "The_objective_function"
                 else:
                     constraint = problems[i].replace("x", f"{x}").replace("y", f"{y}")
-                    problem += eval(constraint), f"{i} constraint"
+                    problem += eval(constraint), f"{i}_constraint"
                     # Extract coefficients and constant from the constraint and add to the constraints list
                     coef_x, coef_y, constant = map(float, re.findall(r'[-+]?\d*\.\d+|\d+', constraint))
                     constraints.append((coef_x, coef_y, constant))
 
-            problem.solve()
+            solver = pulp.PULP_CBC_CMD()
+            problem.solve(solver)
 
             s = ""
             for variable in problem.variables():
@@ -82,15 +83,15 @@ class App(Tk):
 
             # Highlight the feasible region
             plt.fill_between(x_values, np.minimum.reduce([x for x in y_values]),
-                             color='gray', alpha=0.5, label='Feasible Region')
+                             color='gray', alpha=0.5, label='Feasible_Region')
 
             # Highlight the optimal solution
             plt.scatter([optimal_x], [optimal_y], color='red',
-                        label='Optimal Solution')
+                        label='Optimal_Solution')
 
             plt.xlabel("x")
             plt.ylabel("y")
-            plt.title("Feasible Region and Optimal Solution")
+            plt.title("Feasible_Region_and_Optimal_Solution")
             plt.legend()
             plt.grid(True)
             plt.xlim(0, 100)
