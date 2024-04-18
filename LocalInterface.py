@@ -36,7 +36,7 @@ class App(Tk):
                               font=('sans serif', 12),
                               bg='green',
                               fg='white',
-                              command=self.destroy)
+                              command=self.quitBtn_clicked)
         self.quitBtn.pack(pady=5, ipadx=8, ipady=3)
 
     def submitBtn_clicked(self):
@@ -96,7 +96,12 @@ class App(Tk):
             plt.grid(True)
             plt.xlim(0, 100)
             plt.ylim(0, 100)
+
+            self.submitBtn.config(state=DISABLED)
+            plt.connect('close_event', lambda event, btn=self.submitBtn: self.activate_submit_button(event, btn))
             plt.show()
+
+
         except Exception as e:
             messagebox.showerror("Errore", e)
 
@@ -104,6 +109,14 @@ class App(Tk):
 
         # print(self.textField.get("1.0", END))
         # print(int(self.textField.index('end-1c').split('.')[0]))
+
+    def activate_submit_button(self, event, btn):
+        # Activate submit button when the Matplotlib window is closed
+        btn['state'] = NORMAL
+
+    def quitBtn_clicked(self):
+        plt.close()  # Close the Matplotlib window
+        self.destroy()  # Close the tkinter application
 
 
 if __name__ == "__main__":
