@@ -115,8 +115,8 @@ class App(Tk):
         btn['state'] = NORMAL
 
     def quitBtn_clicked(self):
-        plt.close()  # Close the Matplotlib window
-        self.destroy()  # Close the tkinter application
+        plt.close() # Close the Matplotlib window
+        self.destroy() # Close the tkinter application
 
 
 if __name__ == "__main__":
