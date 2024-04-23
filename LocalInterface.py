@@ -68,7 +68,7 @@ class App(Tk):
             for variable in problem.variables():
                 s += f"{variable.name} = {variable.varValue}\n"
 
-            self.res['text'] = f"{s}\n{pulp.value(problem.objective)}"
+            self.res['text'] = f"{s}\nMassimale: {pulp.value(problem.objective)}"
 
             # Extract optimal solution
             optimal_x = pulp.value(x)
@@ -78,8 +78,8 @@ class App(Tk):
             x_values = np.linspace(0, 100, 100)
             y_values = [(j[2] - j[0] * x_values) / j[1] for j in constraints]
 
-            for j in y_values:
-                plt.plot(x_values, j, label=f"n")
+            for j in range(1, len(problems)):
+                plt.plot(x_values, y_values[j-1], label=f"{problems[j]}")
 
             # Highlight the feasible region
             plt.fill_between(x_values, np.minimum.reduce([x for x in y_values]),
@@ -87,13 +87,15 @@ class App(Tk):
 
             # Highlight the optimal solution
             plt.scatter([optimal_x], [optimal_y], color='red',
-                        label='Optimal_Solution')
+                        label=f'Massimale: {pulp.value(problem.objective)}')
 
             plt.xlabel("x")
             plt.ylabel("y")
             plt.title("Feasible_Region_and_Optimal_Solution")
             plt.legend()
             plt.grid(True)
+
+
             plt.xlim(0, 100)
             plt.ylim(0, 100)
 
