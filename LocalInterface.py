@@ -95,8 +95,13 @@ class App(Tk):
             plt.legend()
             plt.grid(True)
 
-            plt.xlim(0, 100)
-            plt.ylim(0, 100)
+            # Calcola i limiti del grafico
+            x_max = max([j[2] / j[0] if j[0] != 0 else 0 for j in constraints])
+            y_max = max([j[2] / j[1] if j[1] != 0 else 0 for j in constraints])
+
+            # Imposta i limiti del grafico
+            plt.xlim(0, x_max + 10)  # Aggiungi un margine di 10 per una migliore visualizzazione
+            plt.ylim(0, y_max + 10)  # Aggiungi un margine di 10 per una migliore visualizzazione
 
             self.submitBtn.config(state=DISABLED)
             plt.connect('close_event', lambda event, btn=self.submitBtn: self.activate_submit_button(event, btn))
