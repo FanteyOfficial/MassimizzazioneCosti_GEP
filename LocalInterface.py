@@ -68,7 +68,7 @@ class App(Tk):
             problem.solve(solver)
 
             if problem.solve(solver) == -1:
-                messagebox.showinfo("Warning", "Non ho trovato punti di massimizzazione!")
+                messagebox.showinfo("OPS", "Non ho trovato punti di massimizzazione!")
                 return
 
             s = ""
@@ -116,7 +116,9 @@ class App(Tk):
 
 
         except Exception as e:
-            messagebox.showerror("Errore", e)
+            # messagebox.showerror("Errore", e)
+            messagebox.showerror("Errore", "La formula inserita non è valida, rispettare il "
+                                           "formato espresso nella documentazione")
 
         # messagebox.showinfo("Risultato", f"{s}\n{pulp.value(problem.objective)}")
 
