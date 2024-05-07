@@ -82,8 +82,8 @@ class App(Tk):
                 plt.plot(x_values, y_values[j-1], label=f"{problems[j]}")
 
             # Highlight the feasible region
-            plt.fill_between(x_values, np.minimum.reduce([x for x in y_values]),
-                             color='gray', alpha=0.5, label='Feasible_Region')
+            """plt.fill_between(x_values, np.minimum.reduce([x for x in y_values]),
+                             color='gray', alpha=0.5, label='Feasible_Region')"""
 
             # Highlight the optimal solution
             plt.scatter([optimal_x], [optimal_y], color='red',
