@@ -41,7 +41,10 @@ class App(Tk):
 
     def submitBtn_clicked(self):
         problems = str(self.textField.get("1.0", END))
+        problems = problems.lower()
         problems = problems.replace(" ", "").replace("z=", "")
+        problems = problems.replace("*", "")
+        problems = problems.replace("x", "*x").replace('y', '*y')
         problems = [x for x in problems.split("\n") if x != ""]
 
         x = pulp.LpVariable("x", lowBound=0)
@@ -63,6 +66,10 @@ class App(Tk):
 
             solver = pulp.PULP_CBC_CMD()
             problem.solve(solver)
+
+            if problem.solve(solver) == -1:
+                messagebox.showinfo("Warning", "Non ho trovato punti di massimizzazione!")
+                return
 
             s = ""
             for variable in problem.variables():
